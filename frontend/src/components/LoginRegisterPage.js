@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Container, Paper, Typography, TextField, Button } from '@mui/material';
+import { useAuth } from '../AuthContext'; // Importez le hook useAuth depuis votre contexte d'authentification
+
 
 const LoginRegisterPage = () => {
     const [loginFormData, setLoginFormData] = useState({ email: '', password: '' });
     const [registerFormData, setRegisterFormData] = useState({ username: '', email: '', password: '' });
+    const { setIsAuthenticated, isAuthenticated, updateAuthState } = useAuth(); // Utilisez le hook useAuth pour accéder à setIsAuthenticated et setIsAdmin
     const navigate = useNavigate(); // Initialise le hook useHistory
 
+    useEffect(() => {
+        console.log(isAuthenticated);
+        if (isAuthenticated) {
+          navigate('/');
+        }
+      }, [isAuthenticated, navigate]);
 
     const handleLoginChange = (e) => {
         const { name, value } = e.target;
@@ -21,7 +30,7 @@ const LoginRegisterPage = () => {
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('/api/auth/login', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -31,7 +40,8 @@ const LoginRegisterPage = () => {
             const data = await response.json();
             console.log(data); // Gère la réponse du serveur ici
             if (response.ok) {
-                navigate('/'); // Redirige vers la page d'accueil si l'inscription réussit
+                updateAuthState(true, data.isAdmin); // Met à jour l'état de l'authentification et de l'administrateur
+                navigate('/'); // Redirige vers la page d'accueil si la connexion réussit
             }
         } catch (error) {
             console.error('Error:', error);
@@ -41,7 +51,7 @@ const LoginRegisterPage = () => {
     const handleRegisterSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('/api/auth/register', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/api/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -51,6 +61,7 @@ const LoginRegisterPage = () => {
             const data = await response.json();
             console.log(data); // Gère la réponse du serveur ici
             if (response.ok) {
+                setIsAuthenticated(true); // Met à jour isAuthenticated à true
                 navigate('/'); // Redirige vers la page d'accueil si la connexion réussit
             }
         } catch (error) {
