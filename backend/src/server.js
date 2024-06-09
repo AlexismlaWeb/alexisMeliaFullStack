@@ -2,8 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const exampleRoutes = require('./routes/exampleRoutes');
+const recipeRoutes = require('./routes/recipeRoutes');
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 dotenv.config();
 
@@ -28,8 +29,9 @@ mongoose.connect(mongoUri, {
 .catch(err => console.log(err));
 
 // Routes
-app.use('/api/examples', exampleRoutes);
+app.use('/api/recipes', recipeRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/user', require('./routes/userRoutes'));
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

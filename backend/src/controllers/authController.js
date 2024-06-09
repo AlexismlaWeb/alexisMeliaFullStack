@@ -8,6 +8,35 @@ const generateToken = (id) => {
     });
 };
 
+// Contrôleur pour la création d'un nouvel utilisateur
+const registerUser = async (req, res) => {
+    const { username, email, password } = req.body;
+
+    try {
+        // Vérifier si l'utilisateur existe déjà
+        const existingUser = await User.findOne({ email });
+
+        if (existingUser) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
+
+        // Créer un nouvel utilisateur
+        const user = await User.create({ username, email, password });
+
+        // Générer un token JWT pour le nouvel utilisateur
+        const token = generateToken(user._id);
+
+        res.status(201).json({
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            token: token,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // Contrôleur pour la connexion
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
@@ -33,5 +62,6 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = {
+    registerUser,
     loginUser
 };

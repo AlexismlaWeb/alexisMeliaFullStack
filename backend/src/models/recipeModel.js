@@ -21,7 +21,15 @@ const recipeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
-    }
+    },
+    likes: {
+        type: Number,
+        default: 0
+    },
+    savedBy: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 });
 
 const Recipe = mongoose.model('Recipe', recipeSchema);
