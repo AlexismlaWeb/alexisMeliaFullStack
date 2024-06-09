@@ -40,7 +40,8 @@ const LoginRegisterPage = () => {
             const data = await response.json();
             console.log(data); // Gère la réponse du serveur ici
             if (response.ok) {
-                updateAuthState(true, data.isAdmin); // Met à jour l'état de l'authentification et de l'administrateur
+                console.log(data);
+                updateAuthState(true, data.admin, data.token); // Met à jour l'état de l'authentification et de l'administrateur
                 navigate('/'); // Redirige vers la page d'accueil si la connexion réussit
             }
         } catch (error) {

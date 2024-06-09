@@ -7,7 +7,9 @@ const {
     updateRecipe,
     deleteRecipe,
     likeRecipe,
-    saveRecipe
+    saveRecipe,
+    getUserRecipes,
+    getSavedRecipes
 } = require('../controllers/recipeController');
 
 const router = express.Router();
@@ -16,7 +18,7 @@ const router = express.Router();
 router.post('/', protect, createRecipe);
 
 // Route pour récupérer toutes les recettes
-router.get('/', getAllRecipes);
+router.get('/', protect, getAllRecipes);
 
 // Route pour récupérer une recette par son ID
 router.get('/:id', getRecipeById);
@@ -32,5 +34,11 @@ router.post('/:id/like', protect, likeRecipe);
 
 // Route pour enregistrer une recette
 router.post('/:id/save', protect, saveRecipe);
+
+// Route pour obtenir les recettes créées par l'utilisateur connecté
+router.get('/myrecipes', protect, getUserRecipes);
+
+// Route pour obtenir les recettes enregistrées par l'utilisateur connecté
+router.get('/savedrecipes', protect, getSavedRecipes);
 
 module.exports = router;

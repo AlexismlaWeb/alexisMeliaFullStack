@@ -21,9 +21,9 @@ const createRecipe = async (req, res) => {
 
 // Contrôleur pour récupérer toutes les recettes
 const getAllRecipes = async (req, res) => {
+    console.log('user',req.admin);
     try {
         let recipes;
-
         // Vérifie si l'utilisateur est un administrateur
         if (req.user.admin) {
             recipes = await Recipe.find().populate('author', 'username');
@@ -39,6 +39,7 @@ const getAllRecipes = async (req, res) => {
 
 // Contrôleur pour récupérer une recette par son ID
 const getRecipeById = async (req, res) => {
+
     const { id } = req.params;
 
     try {
@@ -149,6 +150,33 @@ const saveRecipe = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+const getUserRecipes = async (req, res) => {
+    console.log('user',req);
+    try {
+        const recipes = await Recipe.find({ author: req.user._id });
+        if (!recipes) {
+            return res.status(404).json({ message: 'No recipes found' });
+        }else{
+            return res.json(recipes);
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Récupérer les recettes enregistrées par un utilisateur
+const getSavedRecipes = async (req, res) => {
+    try {
+        const recipes = await Recipe.find({ savedBy: req.user._id });
+        if (!recipes) {
+            return res.status(404).json({ message: 'No saved recipes found' });
+        }else{
+            return res.json(recipes);
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 module.exports = {
     createRecipe,
@@ -157,5 +185,7 @@ module.exports = {
     updateRecipe,
     deleteRecipe,
     likeRecipe,
-    saveRecipe
+    saveRecipe,
+    getUserRecipes,
+    getSavedRecipes
 };

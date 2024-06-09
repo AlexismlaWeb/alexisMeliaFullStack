@@ -10,7 +10,7 @@ const generateToken = (id) => {
 
 // Contrôleur pour la création d'un nouvel utilisateur
 const registerUser = async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, admin } = req.body;
 
     try {
         // Vérifier si l'utilisateur existe déjà
@@ -21,7 +21,7 @@ const registerUser = async (req, res) => {
         }
 
         // Créer un nouvel utilisateur
-        const user = await User.create({ username, email, password });
+        const user = await User.create({ username, email, password, admin});
 
         // Générer un token JWT pour le nouvel utilisateur
         const token = generateToken(user._id);
@@ -31,6 +31,7 @@ const registerUser = async (req, res) => {
             username: user.username,
             email: user.email,
             token: token,
+            admin: user.admin
         });
     } catch (error) {
         res.status(500).json({ message: error.message });

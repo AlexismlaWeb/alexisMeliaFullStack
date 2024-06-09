@@ -13,17 +13,29 @@ export const AuthProvider = ({ children }) => {
         return localStorage.getItem('isAdmin') === 'true';
     });
 
+    const [token, setToken] = useState(() => {
+        // Récupère le token depuis localStorage
+        return localStorage.getItem('token');
+    }
+    );
+
     // Fonction pour mettre à jour l'état de l'authentification
-    const updateAuthState = (authenticated, admin) => {
+    const updateAuthState = (authenticated, admin, authToken) => {
         setIsAuthenticated(authenticated);
         setIsAdmin(admin);
+        setToken(authToken);
+        if (!authenticated) {
+            localStorage.removeItem('token');
+        }else {
+            localStorage.setItem('token', authToken);
+        }
         // Stocke l'état de l'authentification dans localStorage
         localStorage.setItem('isAuthenticated', authenticated);
         localStorage.setItem('isAdmin', admin);
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, isAdmin, updateAuthState }}>
+        <AuthContext.Provider value={{ isAuthenticated, isAdmin, updateAuthState, token }}>
             {children}
         </AuthContext.Provider>
     );

@@ -3,7 +3,8 @@ const { protect } = require('../middleware/authMiddleware');
 const {
     getAllUsers,
     updateUser,
-    deleteUser
+    deleteUser,
+    getUserProfile
 } = require('../controllers/userController');
 
 const router = express.Router();
@@ -16,5 +17,8 @@ router.put('/:id', protect, updateUser);
 
 // Route pour supprimer un utilisateur
 router.delete('/:id', protect, deleteUser);
+
+router.get('/profile', protect, getUserProfile);
+
 
 module.exports = router;

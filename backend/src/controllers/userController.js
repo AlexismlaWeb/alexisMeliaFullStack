@@ -1,4 +1,26 @@
 const User = require('../models/userModel');
+const jwt = require('jsonwebtoken');
+
+const getUserProfile = async (req, res) => {
+    // Extrayez le token JWT de l'en-tête Authorization
+    const token = req.header('Authorization').replace('Bearer ', '');
+    try {
+        // Vérifiez si le token est valide et obtenez les données de l'utilisateur à partir du token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decoded.id;
+
+        // Recherchez l'utilisateur dans la base de données
+        const user = await User.findById(userId).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Renvoyer les informations du profil de l'utilisateur
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 // Contrôleur pour obtenir tous les utilisateurs
 const getAllUsers = async (req, res) => {
@@ -72,5 +94,6 @@ const deleteUser = async (req, res) => {
 module.exports = {
     getAllUsers,
     updateUser,
-    deleteUser
+    deleteUser,
+    getUserProfile
 };
