@@ -36,7 +36,7 @@ router.post('/:id/like', protect, likeRecipe);
 router.post('/:id/save', protect, saveRecipe);
 
 // Route pour obtenir les recettes créées par l'utilisateur connecté
-router.get('/myrecipes', protect, getUserRecipes);
+router.get('/myrecipes', getUserRecipes);
 
 // Route pour obtenir les recettes enregistrées par l'utilisateur connecté
 router.get('/savedrecipes', protect, getSavedRecipes);

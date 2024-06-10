@@ -19,23 +19,24 @@ const createRecipe = async (req, res) => {
     }
 };
 
-// Contrôleur pour récupérer toutes les recettes
 const getAllRecipes = async (req, res) => {
-    console.log('user',req.admin);
     try {
-        let recipes;
-        // Vérifie si l'utilisateur est un administrateur
-        if (req.user.admin) {
-            recipes = await Recipe.find().populate('author', 'username');
-        } else {
-            recipes = await Recipe.find({ author: req.user._id }).populate('author', 'username');
-        }
+        const { page = 1, limit = 10, filter = '' } = req.query;
+        const query = filter ? { title: { $regex: filter, $options: 'i' } } : {};
 
-        res.json(recipes);
+        const recipes = await Recipe.find(query)
+            .populate('author', 'username')
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit));
+
+        const totalRecipes = await Recipe.countDocuments(query);
+
+        res.json({ recipes, totalRecipes });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 // Contrôleur pour récupérer une recette par son ID
 const getRecipeById = async (req, res) => {
@@ -101,7 +102,8 @@ const deleteRecipe = async (req, res) => {
             return res.status(403).json({ message: 'You are not authorized to delete this recipe' });
         }
 
-        await recipe.remove();
+        await Recipe.findByIdAndDelete(id);
+
 
         res.json({ message: 'Recipe deleted' });
     } catch (error) {
@@ -151,18 +153,24 @@ const saveRecipe = async (req, res) => {
     }
 };
 const getUserRecipes = async (req, res) => {
-    console.log('user',req);
     try {
-        const recipes = await Recipe.find({ author: req.user._id });
-        if (!recipes) {
+        const token = req.headers.authorization.split(' ')[1]; // Récupérer le token des en-têtes de la requête
+        const decoded = jwt.verify(token, process.env.JWT_SECRET); // Décoder le token
+        const userId = decoded.id; // Extraire l'ID de l'utilisateur du token
+        console.log('User ID:', userId); // Afficher l'ID de l'utilisateur dans la console (facultatif)
+
+        const recipes = await Recipe.find({ author: userId });
+
+        if (!recipes || recipes.length === 0) { // Vérifier si aucune recette n'a été trouvée
             return res.status(404).json({ message: 'No recipes found' });
-        }else{
+        } else {
             return res.json(recipes);
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 // Récupérer les recettes enregistrées par un utilisateur
 const getSavedRecipes = async (req, res) => {

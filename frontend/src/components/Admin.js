@@ -2,15 +2,20 @@ import React, { useState } from 'react';
 import { Tab, Tabs, Typography, Box } from '@mui/material';
 import UsersTable from './UsersTable';
 import RecipesTable from './RecipesTable';
+import Navbar from './Navbar';
+import { useAuth } from '../AuthContext';
 
 const Admin = () => {
     const [tabValue, setTabValue] = useState(0);
+    const { isAuthenticated, isAdmin } = useAuth();
 
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
     };
 
     return (
+        <div>
+        <Navbar isAuthenticated={isAuthenticated} isAdmin={isAdmin} />
         <Box sx={{ width: '100%', bgcolor: 'background.paper', padding: '20px' }}>
             <Typography variant="h4" gutterBottom>
                 Admin Dashboard
@@ -26,6 +31,7 @@ const Admin = () => {
                 <RecipesTable />
             </TabPanel>
         </Box>
+        </div>
     );
 };
 

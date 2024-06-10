@@ -38,17 +38,20 @@ const ProfilePage = () => {
                             // userData contient maintenant les informations du profil de l'utilisateur
                             setUser(userData);
 
-                    // Récupérer les recettes créées par l'utilisateur
-                    const userRecipesResponse = await fetch(`${process.env.REACT_APP_BACKEND_API}/api/recipes/myrecipes`, {
-                        method: 'GET',
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            'Content-Type': 'application/json',
+                        // Récupérer les recettes créées par l'utilisateur
+                        const myrecipes = await fetch(`${process.env.REACT_APP_BACKEND_API}/api/recipes/myrecipes`, {
+                            method: 'GET',
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                                'Content-Type': 'application/json',
+                            }
+                        });
+                        if (!myrecipes.ok) {
+                            throw new Error('Failed to fetch user recipes');
                         }
-                    });
-                    const userRecipesData = await userRecipesResponse.json();
-                    console.log('reccc',userRecipesResponse);
-                    setUserRecipes(userRecipesData);
+                        const userRecipesData = await myrecipes.json();
+                        setUserRecipes(userRecipesData);
+                    
 
                     // Récupérer les recettes enregistrées par l'utilisateur
                     const savedRecipesResponse = await fetch(`${process.env.REACT_APP_BACKEND_API}/api/recipes/savedrecipes`, {

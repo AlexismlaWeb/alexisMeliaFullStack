@@ -78,18 +78,19 @@ const deleteUser = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Vérifie si l'utilisateur actuel est un administrateur
+        // Verify if the current user is an admin
         if (!req.user.admin) {
             return res.status(403).json({ message: 'You are not authorized to delete this user' });
         }
 
-        await user.remove();
+        await User.findByIdAndDelete(id);
 
         res.json({ message: 'User deleted' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 module.exports = {
     getAllUsers,

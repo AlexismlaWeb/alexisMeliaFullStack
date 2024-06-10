@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Container, Paper, Typography, TextField, Button } from '@mui/material';
 import { useAuth } from '../AuthContext'; // Importez le hook useAuth depuis votre contexte d'authentification
+import Navbar from './Navbar';
 
 
 const LoginRegisterPage = () => {
     const [loginFormData, setLoginFormData] = useState({ email: '', password: '' });
     const [registerFormData, setRegisterFormData] = useState({ username: '', email: '', password: '' });
-    const { setIsAuthenticated, isAuthenticated, updateAuthState } = useAuth(); // Utilisez le hook useAuth pour accéder à setIsAuthenticated et setIsAdmin
+    const { setIsAuthenticated, isAuthenticated, updateAuthState, isAdmin } = useAuth(); // Utilisez le hook useAuth pour accéder à setIsAuthenticated et setIsAdmin
     const navigate = useNavigate(); // Initialise le hook useHistory
 
     useEffect(() => {
@@ -72,6 +73,8 @@ const LoginRegisterPage = () => {
 
 
     return (
+        <div>
+        <Navbar isAuthenticated={isAuthenticated} isAdmin={isAdmin} />
         <Container maxWidth="sm" style={{ marginTop: '50px' }}>
             <Paper elevation={3} style={{ padding: '20px' }}>
                 <Typography variant="h5" align="center">Login</Typography>
@@ -140,6 +143,7 @@ const LoginRegisterPage = () => {
                 </form>
             </Paper>
         </Container>
+        </div>
     );
 };
 
