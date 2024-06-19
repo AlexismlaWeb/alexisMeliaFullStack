@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000';
+const API_URL = 'http://localhost:3001';
 
 // Exemple de requête GET
 export const getExampleData = async () => {
